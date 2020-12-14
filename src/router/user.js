@@ -18,8 +18,10 @@ const handelUserRouter = (req, res) => {
         const {userName, passWord} = req.query
         const result = login(userName, passWord)
         return result.then(data => {
-            res.setHeader('Set-Cookie',`userName=${data.userName}; path=/; httpOnly; expires=${getCookieExprires()}`)
             if (data.userName) {
+                req.session.userName = data.userName
+                req.session.realName = data.realName
+
                 return new SuccessModel()
             }
             return new ErrorModel('登录失败')
@@ -28,11 +30,10 @@ const handelUserRouter = (req, res) => {
 
     // 用户登录测试
     if (method === 'GET' && req.path === '/api/user/login-test') {
-        console.log(req.cookie)
-        if(req.cookie.userName) {
+        if(req.session.userName) {
             return Promise.resolve(
                 new SuccessModel({
-                    userName: req.cookie.userName
+                    session: req.session
                 })
             )
         }
