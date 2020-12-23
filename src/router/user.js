@@ -1,5 +1,6 @@
 const {login} = require('../controller/user')
 const {SuccessModel, ErrorModel} = require('../model/resModel')
+const  { set } = require('../db/redis')
 
 // 获取cookie过期时间
 const getCookieExprires = () => {
@@ -13,14 +14,16 @@ const handelUserRouter = (req, res) => {
     const method = req.method
 
     // 用户登录
-    if (method === 'GET' && req.path === '/api/user/login') {
-        // const {userName, passWord} = req.body
-        const {userName, passWord} = req.query
+    if (method === 'POST' && req.path === '/api/user/login') {
+        const {userName, passWord} = req.body
+        // const {userName, passWord} = req.query
         const result = login(userName, passWord)
         return result.then(data => {
             if (data.userName) {
                 req.session.userName = data.userName
                 req.session.realName = data.realName
+                // 同步到redis中
+                set(req.sessionId, req.session)
 
                 return new SuccessModel()
             }
@@ -29,18 +32,18 @@ const handelUserRouter = (req, res) => {
     }
 
     // 用户登录测试
-    if (method === 'GET' && req.path === '/api/user/login-test') {
-        if(req.session.userName) {
-            return Promise.resolve(
-                new SuccessModel({
-                    session: req.session
-                })
-            )
-        }
-        return Promise.resolve(
-            new ErrorModel('尚未登录！')
-        )
-    }
+    // if (method === 'GET' && req.path === '/api/user/login-test') {
+    //     if(req.session && req.session.userName) {
+    //         return Promise.resolve(
+    //             new SuccessModel({
+    //                 session: req.session
+    //             })
+    //         )
+    //     }
+    //     return Promise.resolve(
+    //         new ErrorModel('尚未登录！')
+    //     )
+    // }
 }
 
 module.exports = handelUserRouter
