@@ -15,14 +15,15 @@ function set(key, val) {
 }
 
 function get(key) {
-    const Promise = new Promise((resolve, reject) => {
+    const promise = new Promise((resolve, reject) => {
         redisClient.get(key, (err, val) => {
             if (err) {
                 reject(err)
                 return
             }
-            if (val == null) {
+            if (val === null) {
                 resolve(null)
+                return
             }
             try {
                 resolve(
@@ -33,7 +34,7 @@ function get(key) {
             }
         })
     })
-    return Promise
+    return promise
 }
 
 module.exports = {

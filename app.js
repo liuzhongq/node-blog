@@ -4,7 +4,7 @@ const handleBlogRouter = require('./src/router/blog')
 const handleUserRouter = require('./src/router/user')
 
 // 获取cookie过期时间
-const getCookieExprires = () => {
+const getCookieExpires = () => {
     const d = new Date()
     d.setTime(d.getTime() + ( 32 * 60 * 60 * 1000))
     console.log(d.toUTCString())
@@ -121,7 +121,7 @@ const serverHandle = (req, res) => {
         if (blogResult) {
             blogResult.then(blogData => {
                 if (needSetCookie) {
-                    res.setHeader('Set-Cookie',`userId=${userId}; path=/; httpOnly; expires=${getCookieExprires()}`)
+                    res.setHeader('Set-Cookie',`userId=${userId}; path=/; httpOnly; expires=${getCookieExpires()}`)
                 }
                 res.end(
                     JSON.stringify(blogData)
@@ -143,7 +143,7 @@ const serverHandle = (req, res) => {
         if (userResult) {
             userResult.then(userData => {
                 if (needSetCookie) {
-                    res.setHeader('Set-Cookie',`userId=${userId}; path=/; httpOnly; expires=${getCookieExprires()}`)
+                    res.setHeader('Set-Cookie',`userId=${userId}; path=/; httpOnly; expires=${getCookieExpires()}`)
                 }
                 res.end(
                     JSON.stringify(userData)
